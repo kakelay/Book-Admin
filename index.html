@@ -31,19 +31,31 @@
       <div :class="['sidebar bg-white w-64 p-4 shadow-md', { 'sidebar-hidden': !isSidebarOpen }]">
         <h2 class="text-2xl font-bold mb-4">Menu</h2>
         <ul>
-          <li class="mb-2">
-            <a href="#" @click.prevent="showSection('createBook')" class="text-gray-700 hover:text-blue-500">Create Book</a>
-          </li>
-          <li class="mb-2">
-            <a href="#" @click.prevent="showSection('listBooks')" class="text-gray-700 hover:text-blue-500">List of Books</a>
-          </li>
-          <li class="mb-2">
-            <a href="#" class="text-gray-700 hover:text-blue-500">Users</a>
-          </li>
-          <li class="mb-2">
-            <a href="#" class="text-gray-700 hover:text-blue-500">Settings</a>
-          </li>
-        </ul>
+            <li class="mb-2">
+              <a href="#" @click.prevent="showSection('createBook')" 
+                 :class="{'text-blue-500 font-bold': currentSection === 'createBook', 'text-gray-700': currentSection !== 'createBook'}">
+                Create Book
+              </a>
+            </li>
+            <li class="mb-2">
+              <a href="#" @click.prevent="showSection('listBooks')" 
+                 :class="{'text-blue-500 font-bold': currentSection === 'listBooks', 'text-gray-700': currentSection !== 'listBooks'}">
+                List of Books
+              </a>
+            </li>
+            <li class="mb-2">
+              <a href="#" 
+                 :class="{'text-blue-500 font-bold': currentSection === 'users', 'text-gray-700': currentSection !== 'users'}">
+                Users
+              </a>
+            </li>
+            <li class="mb-2">
+              <a href="#" 
+                 :class="{'text-blue-500 font-bold': currentSection === 'settings', 'text-gray-700': currentSection !== 'settings'}">
+                Settings
+              </a>
+            </li>
+          </ul>
       </div>
       <div class="flex-1 p-4">
         <button @click="toggleSidebar" class="mb-4 text-blue-500">
