@@ -19,56 +19,95 @@
         font-family: "Roboto", sans-serif;
       }
       .sidebar {
-        transition: transform 0.3s ease;
-        width: 16rem; /* Set the sidebar width */
+        transition: transform 0.3s ease, width 0.3s ease;
+        transform: translateX(0);
+        width: 16rem; /* Default width */
       }
       .sidebar-hidden {
         transform: translateX(-100%);
+        width: 0; /* When hidden, the sidebar width will be 0 */
+        visibility: hidden; /* Ensures the sidebar is completely hidden */
       }
+      .sidebar-open {
+        transform: translateX(0);
+        width: 16rem;
+        visibility: visible; /* Makes the sidebar visible when opened */
+      }
+      /* Optional: Add some transition to body content to adjust for sidebar changes */
       .content {
         transition: margin-left 0.3s ease;
-        width: 100%;
       }
-      .content-expanded {
-        margin-left: 16rem; /* Sidebar width */
+      .content-shift {
+        margin-left: 16rem; /* Shifts the content when the sidebar is open */
       }
     </style>
   </head>
   <body>
     <div id="app" class="flex min-h-screen bg-gray-100">
-      <div :class="['sidebar bg-white p-4 shadow-md', { 'sidebar-hidden': !isSidebarOpen }]">
+      <!-- Sidebar -->
+      <div
+        :class="['sidebar bg-white p-4 shadow-md', {
+          'sidebar-hidden': !isSidebarOpen,
+          'sidebar-open': isSidebarOpen,
+        }]"
+      >
         <h2 class="text-2xl font-bold mb-4">Menu</h2>
         <ul>
           <li class="mb-2">
-            <a href="#" @click.prevent="showSection('createBook')" 
-               :class="{'text-blue-500 font-bold': currentSection === 'createBook', 'text-gray-700': currentSection !== 'createBook'}">
-              Create Book
-            </a>
+            <a
+              href="#"
+              @click.prevent="showSection('createBook')"
+              :class="{
+                'text-blue-500 font-bold': currentSection === 'createBook',
+                'text-gray-700': currentSection !== 'createBook',
+              }"
+              >Create Book</a
+            >
           </li>
           <li class="mb-2">
-            <a href="#" @click.prevent="showSection('listBooks')" 
-               :class="{'text-blue-500 font-bold': currentSection === 'listBooks', 'text-gray-700': currentSection !== 'listBooks'}">
-              List of Books
-            </a>
+            <a
+              href="#"
+              @click.prevent="showSection('listBooks')"
+              :class="{
+                'text-blue-500 font-bold': currentSection === 'listBooks',
+                'text-gray-700': currentSection !== 'listBooks',
+              }"
+              >List of Books</a
+            >
           </li>
           <li class="mb-2">
-            <a href="#" 
-               :class="{'text-blue-500 font-bold': currentSection === 'users', 'text-gray-700': currentSection !== 'users'}">
-              Users
-            </a>
+            <a
+              href="#"
+              :class="{
+                'text-blue-500 font-bold': currentSection === 'users',
+                'text-gray-700': currentSection !== 'users',
+              }"
+              >Users</a
+            >
           </li>
           <li class="mb-2">
-            <a href="#" 
-               :class="{'text-blue-500 font-bold': currentSection === 'settings', 'text-gray-700': currentSection !== 'settings'}">
-              Settings
-            </a>
+            <a
+              href="#"
+              :class="{
+                'text-blue-500 font-bold': currentSection === 'settings',
+                'text-gray-700': currentSection !== 'settings',
+              }"
+              >Settings</a
+            >
           </li>
         </ul>
       </div>
-      <div :class="['content p-4', { 'content-expanded': isSidebarOpen }]">
-        <button @click="toggleSidebar" class="mb-4 text-blue-500">
-          <i class="fas fa-bars"></i> {{ isSidebarOpen ? 'Close Menu' : 'Open Menu' }}
-        </button>
+      
+      <!-- Main content -->
+      <div :class="['content flex-1 p-4', { 'Content-Type': isSidebarOpen }]">
+        <button
+        @click="toggleSidebar"
+        class="mb-0 text-blue-500 flex items-center space-x-1"
+      >
+        <i class="fas fa-bars font-bold text-2xl"></i>
+        <span class=" text-2xl">{{ isSidebarOpen ? 'Close Menu' : 'Open Menu' }}</span>
+      </button>
+      
         <div class="max-w-7xl mx-auto">
           <h1 class="text-4xl font-bold mb-8 text-center">Admin Dashboard</h1>
           <div v-if="currentSection === 'createBook'" class="h-full">
@@ -123,7 +162,8 @@
                 </div>
                 <button
                   type="submit"
-                  class="bg-blue-500 text-white px-6 py-3 rounded w-full">
+                  class="bg-blue-500 text-white px-6 py-3 rounded w-full"
+                >
                   Create Book
                 </button>
               </form>
@@ -230,11 +270,11 @@
           return {
             newBook,
             books,
-            createBook,
             isSidebarOpen,
-            toggleSidebar,
             currentSection,
+            toggleSidebar,
             showSection,
+            createBook,
           };
         },
       }).mount("#app");
