@@ -18,66 +18,98 @@
       body {
         font-family: "Roboto", sans-serif;
       }
+      .sidebar {
+        transition: transform 0.3s ease;
+      }
+      .sidebar-hidden {
+        transform: translateX(-100%);
+      }
     </style>
   </head>
   <body>
-    <div id="app" class="min-h-screen bg-gray-100 p-4">
-      <div class="max-w-7xl mx-auto">
-        <h1 class="text-4xl font-bold mb-8 text-center">Admin Dashboard</h1>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div class="bg-white p-6 rounded-lg shadow-md">
-            <h2 class="text-3xl font-bold mb-6 text-center">Create Book</h2>
-            <form @submit.prevent="createBook">
-              <div class="mb-4">
-                <label class="block text-gray-700">Title</label>
-                <input
-                  v-model="newBook.title"
-                  type="text"
-                  class="w-full p-3 border border-gray-300 rounded mt-1"
-                />
-              </div>
-              <div class="mb-4">
-                <label class="block text-gray-700">Author</label>
-                <input
-                  v-model="newBook.author"
-                  type="text"
-                  class="w-full p-3 border border-gray-300 rounded mt-1"
-                />
-              </div>
-              <div class="mb-4">
-                <label class="block text-gray-700">Genre</label>
-                <input
-                  v-model="newBook.genre"
-                  type="text"
-                  class="w-full p-3 border border-gray-300 rounded mt-1"
-                />
-              </div>
-              <div class="mb-4">
-                <label class="block text-gray-700">Price</label>
-                <input
-                  v-model="newBook.price"
-                  type="number"
-                  step="0.01"
-                  class="w-full p-3 border border-gray-300 rounded mt-1"
-                />
-              </div>
-              <div class="mb-4">
-                <label class="block text-gray-700">Published Year</label>
-                <input
-                  v-model="newBook.published_year"
-                  type="text"
-                  class="w-full p-3 border border-gray-300 rounded mt-1"
-                />
-              </div>
-              <button
-                type="submit"
-                class="bg-blue-500 text-white px-6 py-3 rounded w-full"
-              >
-                Create Book
-              </button>
-            </form>
+    <div id="app" class="flex min-h-screen bg-gray-100">
+      <div :class="['sidebar bg-white w-64 p-4 shadow-md', { 'sidebar-hidden': !isSidebarOpen }]">
+        <h2 class="text-2xl font-bold mb-4">Menu</h2>
+        <ul>
+          <li class="mb-2">
+            <a href="#" @click.prevent="showSection('createBook')" class="text-gray-700 hover:text-blue-500">Create Book</a>
+          </li>
+          <li class="mb-2">
+            <a href="#" @click.prevent="showSection('listBooks')" class="text-gray-700 hover:text-blue-500">List of Books</a>
+          </li>
+          <li class="mb-2">
+            <a href="#" class="text-gray-700 hover:text-blue-500">Users</a>
+          </li>
+          <li class="mb-2">
+            <a href="#" class="text-gray-700 hover:text-blue-500">Settings</a>
+          </li>
+        </ul>
+      </div>
+      <div class="flex-1 p-4">
+        <button @click="toggleSidebar" class="mb-4 text-blue-500">
+          <i class="fas fa-bars"></i> Toggle Menu
+        </button>
+        <div class="max-w-7xl mx-auto">
+          <h1 class="text-4xl font-bold mb-8 text-center">Admin Dashboard</h1>
+          <div v-if="currentSection === 'createBook'" class="h-full">
+            <div class="bg-white p-6 rounded-lg shadow-md h-full">
+              <h2 class="text-3xl font-bold mb-6 text-center">Create Book</h2>
+              <form @submit.prevent="createBook">
+                <div class="mb-4">
+                  <label class="block text-gray-700">Title</label>
+                  <input
+                    v-model="newBook.title"
+                    type="text"
+                    class="w-full p-3 border border-gray-300 rounded mt-1"
+                    required
+                  />
+                </div>
+                <div class="mb-4">
+                  <label class="block text-gray-700">Author</label>
+                  <input
+                    v-model="newBook.author"
+                    type="text"
+                    class="w-full p-3 border border-gray-300 rounded mt-1"
+                    required
+                  />
+                </div>
+                <div class="mb-4">
+                  <label class="block text-gray-700">Genre</label>
+                  <input
+                    v-model="newBook.genre"
+                    type="text"
+                    class="w-full p-3 border border-gray-300 rounded mt-1"
+                    required
+                  />
+                </div>
+                <div class="mb-4">
+                  <label class="block text-gray-700">Price</label>
+                  <input
+                    v-model="newBook.price"
+                    type="number"
+                    step="0.01"
+                    class="w-full p-3 border border-gray-300 rounded mt-1"
+                    required
+                  />
+                </div>
+                <div class="mb-4">
+                  <label class="block text-gray-700">Published Year</label>
+                  <input
+                    v-model="newBook.published_year"
+                    type="text"
+                    class="w-full p-3 border border-gray- 300 rounded mt-1"
+                    required
+                  />
+                </div>
+                <button
+                  type="submit"
+                  class="bg-blue-500 text-white px-6 py-3 rounded w-full">
+                  Create Book
+                </button>
+              </form>
+            </div>
           </div>
-          <div class="bg-white p-6 rounded-lg shadow-md">
+          <div v-if="currentSection === 'listBooks'" class="bg-white p-6 rounded-lg shadow-md">
             <h2 class="text-3xl font-bold mb-6 text-center">List of Books</h2>
             <div v-if="books.length === 0" class="text-gray-500 text-center">
               No books available.
@@ -115,8 +147,19 @@
           });
 
           const books = ref([]);
+          const isSidebarOpen = ref(true);
+          const currentSection = ref('createBook');
+
+          const toggleSidebar = () => {
+            isSidebarOpen.value = !isSidebarOpen.value;
+          };
+
+          const showSection = (section) => {
+            currentSection.value = section;
+          };
 
           const createBook = async () => {
+            console.log("Creating book with data:", newBook.value); // Debugging log
             try {
               const response = await fetch("http://localhost:8080/api/books", {
                 method: "POST",
@@ -126,7 +169,7 @@
                 body: JSON.stringify(newBook.value),
               });
               const data = await response.json();
-              console.log("Create Book Response:", data); // Add this line to log the response
+              console.log("Create Book Response:", data);
               if (data.status === "success") {
                 books.value.push(data.data);
                 newBook.value = {
@@ -148,10 +191,10 @@
             try {
               const response = await fetch("http://localhost:8080/api/books");
               const data = await response.json();
-              console.log("Fetch Books Response:", data); // Log the response data for debugging
+              console.log("Fetch Books Response:", data);
               if (data.status === "success") {
                 books.value = data.data;
-                console.log("Books:", books.value); // Log the books array to check the data
+                console.log("Books:", books.value);
               } else {
                 alert(data.message);
               }
@@ -168,6 +211,10 @@
             newBook,
             books,
             createBook,
+            isSidebarOpen,
+            toggleSidebar,
+            currentSection,
+            showSection,
           };
         },
       }).mount("#app");
