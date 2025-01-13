@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.3.11/dist/vue.global.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Roboto", sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app" class="min-h-screen bg-gray-100 p-4">
+      <div class="max-w-7xl mx-auto">
+        <h1 class="text-4xl font-bold mb-8 text-center">Admin Dashboard</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-3xl font-bold mb-6 text-center">Create Book</h2>
+            <form @submit.prevent="createBook">
+              <div class="mb-4">
+                <label class="block text-gray-700">Title</label>
+                <input
+                  v-model="newBook.title"
+                  type="text"
+                  class="w-full p-3 border border-gray-300 rounded mt-1"
+                />
+              </div>
+              <div class="mb-4">
+                <label class="block text-gray-700">Author</label>
+                <input
+                  v-model="newBook.author"
+                  type="text"
+                  class="w-full p-3 border border-gray-300 rounded mt-1"
+                />
+              </div>
+              <div class="mb-4">
+                <label class="block text-gray-700">Genre</label>
+                <input
+                  v-model="newBook.genre"
+                  type="text"
+                  class="w-full p-3 border border-gray-300 rounded mt-1"
+                />
+              </div>
+              <div class="mb-4">
+                <label class="block text-gray-700">Price</label>
+                <input
+                  v-model="newBook.price"
+                  type="number"
+                  step="0.01"
+                  class="w-full p-3 border border-gray-300 rounded mt-1"
+                />
+              </div>
+              <div class="mb-4">
+                <label class="block text-gray-700">Published Year</label>
+                <input
+                  v-model="newBook.published_year"
+                  type="text"
+                  class="w-full p-3 border border-gray-300 rounded mt-1"
+                />
+              </div>
+              <button
+                type="submit"
+                class="bg-blue-500 text-white px-6 py-3 rounded w-full"
+              >
+                Create Book
+              </button>
+            </form>
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-3xl font-bold mb-6 text-center">List of Books</h2>
+            <div v-if="books.length === 0" class="text-gray-500 text-center">
+              No books available.
+            </div>
+            <ul v-else>
+              <li
+                v-for="book in books"
+                :key="book.id"
+                class="mb-4 p-4 border border-gray-200 rounded"
+              >
+                <h3 class="text-2xl font-bold">{{ book.title }}</h3>
+                <p><strong>Author:</strong> {{ book.author }}</p>
+                <p><strong>Genre:</strong> {{ book.genre }}</p>
+                <p><strong>Price:</strong> ${{ book.price }}</p>
+                <p>
+                  <strong>Published Year:</strong> {{ book.published_year }}
+                </p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const { createApp, ref, onMounted } = Vue;
+
+      createApp({
+        setup() {
+          const newBook = ref({
+            title: "",
+            author: "",
+            genre: "",
+            price: null,
+            published_year: "",
+          });
+
+          const books = ref([]);
+
+          const createBook = async () => {
+            try {
+              const response = await fetch("http://localhost:8080/api/books", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(newBook.value),
+              });
+              const data = await response.json();
+              console.log("Create Book Response:", data); // Add this line to log the response
+              if (data.status === "success") {
+                books.value.push(data.data);
+                newBook.value = {
+                  title: "",
+                  author: "",
+                  genre: "",
+                  price: null,
+                  published_year: "",
+                };
+              } else {
+                alert(data.message);
+              }
+            } catch (error) {
+              console.error("Error creating book:", error);
+            }
+          };
+
+          const fetchBooks = async () => {
+            try {
+              const response = await fetch("http://localhost:8080/api/books");
+              const data = await response.json();
+              console.log("Fetch Books Response:", data); // Log the response data for debugging
+              if (data.status === "success") {
+                books.value = data.data;
+                console.log("Books:", books.value); // Log the books array to check the data
+              } else {
+                alert(data.message);
+              }
+            } catch (error) {
+              console.error("Error fetching books:", error);
+            }
+          };
+
+          onMounted(() => {
+            fetchBooks();
+          });
+
+          return {
+            newBook,
+            books,
+            createBook,
+          };
+        },
+      }).mount("#app");
+    </script>
+  </body>
+</html>
