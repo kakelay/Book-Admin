@@ -95,6 +95,16 @@
               >Settings</a
             >
           </li>
+           <li class="mb-2">
+            <a
+              href="#"
+              :class="{
+                'text-blue-500 font-bold': currentSection === 'settings',
+                'text-gray-700': currentSection !== 'settings',
+              }"
+              >logout</a
+            >
+          </li>
         </ul>
       </div>
 
