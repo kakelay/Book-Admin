@@ -95,7 +95,27 @@
               >Settings</a
             >
           </li>
-           <li class="mb-2">
+          <li class="mb-2">
+            <a
+              href="#"
+              :class="{
+                'text-blue-500 font-bold': currentSection === 'settings',
+                'text-gray-700': currentSection !== 'settings',
+              }"
+              >Admin</a
+            >
+          </li>
+          <li class="mb-2">
+            <a
+              href="#"
+              :class="{
+                'text-blue-500 font-bold': currentSection === 'settings',
+                'text-gray-700': currentSection !== 'settings',
+              }"
+              >HelpMe</a
+            >
+          </li>
+          <li class="mb-2">
             <a
               href="#"
               :class="{
@@ -115,7 +135,10 @@
           class="mb-0 text-blue-500 flex items-center space-x-1"
         >
           <!-- Conditional rendering for the icon -->
-          <i class="fas text-2xl" :class="isSidebarOpen ? 'fa-times' : 'fa-bars'"></i>
+          <i
+            class="fas text-2xl"
+            :class="isSidebarOpen ? 'fa-times' : 'fa-bars'"
+          ></i>
           <span class="text-2xl"
             >{{ isSidebarOpen ? 'Close Menu' : 'Open Menu' }}</span
           >
@@ -189,7 +212,7 @@
             <h2 class="text-3xl font-bold mb-6 text-center">List of Books</h2>
             <div v-if="books.length === 0" class="text-gray-500 text-center">
               No books available Please ypur api
-            </div> 
+            </div>
             <ul v-else>
               <li
                 v-for="book in books"
